@@ -12,7 +12,7 @@
         src: url('./Roadgeek 2005 Transport Heavy.otf');
       }
       html {
-        background: #333;
+        background: #000;
         height: 100%;
         width: 100%;
 
@@ -38,13 +38,12 @@
         border-radius: 20px;
         display: block;
         background: #000;
-        border: 2px solid rgba(255,255,255,0.4);
-        padding: 1em;
-        box-shadow: 10px 10px 8px rgba(0,0,0,0.4);
         margin: 2%;
+        padding: 0.5em;
       }
       #treeStatus {
         font: 85px/1 "RoadGeek", Helvetica;
+        margin-bottom: 0.5em;
       }
         .open #treeStatus {
           color:  #3F3;
@@ -53,61 +52,97 @@
           color:  #F33;
         }
 
-      #nextMilestone {
-        margin: 0.5em 0;
-        font: 80px/1 "RoadGeek", Helvetica;
-        color:  #FFF;
-      }
-
-      #todo {
+      .todo {
         font: 80px/1 "RoadGeek", Helvetica;
         color: #999;
       }
-        #todo span {
+        .todo span {
+          clear: both;
           display: block;
           color: #FFF;
           margin-top: 0.5em;
         }
     </style>
     <script src="./TreeStatus.js"></script>
+    <script src="./Milestoner.js"></script>
   </head>
   <body>
     <section id="treeStatus">The tree is open.</section> 
-    <section id="nextMilestone"><em>11</em> days until M11 Feature Freeze.</section>
-    <section id="todo">
-      TODO(mkwst): Implement shiny graphs and lists and etc.  That might take a while,
-      so start with some reasonably interesting placeholder.
+    <section id="milestones">
+      <h1>Monday, Feb 28</h1>
+      <ol>
+        <li><time datetime="2011-03-07">7.3</time> M11 Feature Freeze <em>(6.51 days)</em></li>
+        <li><time datetime="2011-03-28">28.3</time> M11 Beta Branch <em>(11.12 days)</em></li>
+      </ol>
+    </section>
+    <section class="todo">
+      TODO(mkwst): Implement shiny graphs and lists and etc.  That might take a while.
+    </section>
+    <section class="todo">
       <span>Dory: go/chrome-team-muc-dashboard</span>
     </section>
+    <style>
+      #milestones {
+        width: 1100px;
+        float: right;
+        margin: 0.5em;
+      }
+        #milestones h1 {
+          font: 40px/1 "RoadGeek", Helvetica;
+          color: #FFF;
+          background: #060;
+          border-bottom: 1px solid #070;
+          text-align: center;
+          padding: 0.2em 0 0.1em;
+          border-radius: 20px 20px 0 0;
+          margin: 0;
+        }
+        #milestones ol, #milestones li {
+          margin: 0;
+          padding: 0;
+          color: #CCC;
+          font: 50px/1 "RoadGeek", Helvetica;
+          list-style: none inside;
+        }
+        #milestones ol {
+          background: #222;
+          border: 1px solid #444;
+          border-top-color: #060;
+        }
+          #milestones li {
+            border-bottom: 1px solid rgba(0,0,0,0.5);
+            padding: 0.2em 0.2em 0.1em 0.2em;
+          }
+          #milestones li:nth-child(2n) {
+            background: #444;
+          }
+          #milestones li:last-child {
+            border: none;
+          }
+        #milestones time {
+          width: 2em;
+          text-align: right;
+          display: inline-block;
+        }
+        #milestones em {
+          color: #FFF;
+        }
+        #milestones strong {
+          color: #F33;
+        }
+
+    </style>
     <script>
       var ts = new TreeStatus({ 'id': 'treeStatus' });
 
-
-      var Milestoner = function(data) {
-        this.el = document.getElementById(data.id);
-        this.event = data.event;
-        this.date = data.date;
-
-        var self = this;
-        self.update_();
-        window.setInterval(function() {
-          self.update_();
-        }, 100000);
-      };
-
-      Milestoner.prototype.update_ = function() {
-        var DAILY_MILLISECONDS = 1000 * 60 * 60 * 24;
-        var daysLeft = (this.date - new Date()) / DAILY_MILLISECONDS;
-        daysLeft = Math.floor(daysLeft * 100) / 100;
-
-        this.el.innerHTML = "<el>" + daysLeft + "</el> days until " + this.event;
-      };
-
+      var ms = new Milestoner({ 'id': 'milestones', 'toDisplay': 5 });
+/*
       var ms = new Milestoner({
         'date': new Date(2011, 2, 7, 0, 0, 0),
         'event': 'M11 Feature Freeze',
         'id': 'nextMilestone'
       });
+*/
     </script>
   </body>
 </html>

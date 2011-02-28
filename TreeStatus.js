@@ -15,7 +15,7 @@ var TreeStatus = function(data) {
  * @const
  * @type {string}
  */
-TreeStatus.STATUS_URL = 'http://6.chromium-status.appspot.com/current?format=json';
+TreeStatus.STATUS_URL = 'http://chromium-status.appspot.com/current?format=json';
 
 /**
  * @enum {string}
