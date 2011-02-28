@@ -3,31 +3,111 @@
   <head>
     <title>Chromium Status: Munich Dashboard</title>
     <style>
+      @font-face {
+        font-family: "RoadGeek";
+        src: url('./Roadgeek 2005 Transport Medium.otf');
+      }
+      @font-face {
+        font-family: "RoadGeek Bold";
+        src: url('./Roadgeek 2005 Transport Heavy.otf');
+      }
       html {
-        background: #999;
+        background: #333;
         height: 100%;
         width: 100%;
+
+        display: -webkit-box;
+        -webkit-box-orient: horizontal;
+        -webkit-box-pack: center;
+        -webkit-box-align: center;
+
+        display: -moz-box;
+        -moz-box-orient: horizontal;
+        -moz-box-pack: center;
+        -moz-box-align: center;
+
+        display: box;
+        box-orient: horizontal;
+        box-pack: center;
+        box-align: center;
       }
-        .broken {
-          background-color: #E98080;
-        }
+      html.closed {
+        background: #900;
+      }
       body {
         border-radius: 20px;
-        height: 94%;
-        width: 94%;
-        margin: 3% 0 0 3%;
         display: block;
-        background: #FFF;
+        background: #000;
+        border: 2px solid rgba(255,255,255,0.4);
+        padding: 1em;
         box-shadow: 10px 10px 8px rgba(0,0,0,0.4);
+        margin: 2%;
       }
+      #treeStatus {
+        font: 85px/1 "RoadGeek", Helvetica;
+      }
+        .open #treeStatus {
+          color:  #3F3;
+        }
+        .closed #treeStatus {
+          color:  #F33;
+        }
+
+      #nextMilestone {
+        margin: 0.5em 0;
+        font: 80px/1 "RoadGeek", Helvetica;
+        color:  #FFF;
+      }
+
+      #todo {
+        font: 80px/1 "RoadGeek", Helvetica;
+        color: #999;
+      }
+        #todo span {
+          display: block;
+          color: #FFF;
+          margin-top: 0.5em;
+        }
     </style>
     <script src="./TreeStatus.js"></script>
-    <script>
-      var ts = new TreeStatus();
-    </script>
   </head>
   <body>
-     
+    <section id="treeStatus">The tree is open.</section> 
+    <section id="nextMilestone"><em>11</em> days until M11 Feature Freeze.</section>
+    <section id="todo">
+      TODO(mkwst): Implement shiny graphs and lists and etc.  That might take a while,
+      so start with some reasonably interesting placeholder.
+      <span>Dory: go/chrome-team-muc-dashboard</span>
+    </section>
+    <script>
+      var ts = new TreeStatus({ 'id': 'treeStatus' });
 
+
+      var Milestoner = function(data) {
+        this.el = document.getElementById(data.id);
+        this.event = data.event;
+        this.date = data.date;
+
+        var self = this;
+        self.update_();
+        window.setInterval(function() {
+          self.update_();
+        }, 100000);
+      };
+
+      Milestoner.prototype.update_ = function() {
+        var DAILY_MILLISECONDS = 1000 * 60 * 60 * 24;
+        var daysLeft = (this.date - new Date()) / DAILY_MILLISECONDS;
+        daysLeft = Math.floor(daysLeft * 100) / 100;
+
+        this.el.innerHTML = "<el>" + daysLeft + "</el> days until " + this.event;
+      };
+
+      var ms = new Milestoner({
+        'date': new Date(2011, 2, 7, 0, 0, 0),
+        'event': 'M11 Feature Freeze',
+        'id': 'nextMilestone'
+      });
+    </script>
   </body>
 </html>

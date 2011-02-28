@@ -1,5 +1,10 @@
-var TreeStatus = function() {
-  this.requestData_();
+var TreeStatus = function(data) {
+  this.el = document.getElementById(data.id);
+  var self = this;
+  self.requestData_();
+  window.setInterval(function() {
+    self.requestData_();
+  }, 10000);
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -15,7 +20,7 @@ TreeStatus.STATUS_URL = 'http://6.chromium-status.appspot.com/current?format=jso
 /**
  * @enum {string}
  */
-TreeStatus.TreeState = {
+TreeStatus.State = {
   CLOSED: 'closed',
   MAINTENANCE: 'maintenance',
   OPEN: 'open',
@@ -24,7 +29,7 @@ TreeStatus.TreeState = {
 
 /**
  * @typedef {{username: string, date: Date, message: string,
- *     state: TreeStatus.TreeState}}
+ *     state: TreeStatus.State}}
  */
 TreeStatus.TreeData;
 
@@ -45,6 +50,7 @@ TreeStatus.prototype.requestData_ = function() {
     if (xhr.readyState === 4 && xhr.status === 200) {
       var data = JSON.parse(xhr.responseText);
       self.data_ = self.parseData_(data);
+      self.update_();
     } else {
       // TODO(mkwst) Error handling.
     }
@@ -60,7 +66,8 @@ TreeStatus.prototype.parseData_ = function(data) {
   var result = {
     'username': data.username,
     'date': this.parseDate_(data.date),
-    'message': data.message
+    'message': data.message,
+    'state': data.general_state
   };
    
   return result;
@@ -83,4 +90,19 @@ TreeStatus.prototype.parseDate_ = function(data) {
   } else {
     return null;
   }
+};
+
+/**
+ * Updates a DOM element's 'innerHTML' based on the tree's status.
+ * @private
+ */
+TreeStatus.prototype.update_ = function() {
+  if (this.data_.state === TreeStatus.State.OPEN) {
+    document.documentElement.classList.add('open');
+    document.documentElement.classList.remove('closed');
+  } else {
+    document.documentElement.classList.add('closed');
+    document.documentElement.classList.remove('open');
+  }
+  this.el.innerHTML = this.data_.message;
 };
